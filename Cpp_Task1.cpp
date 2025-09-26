@@ -7,6 +7,7 @@ using namespace std;
 int main() {
     vector<string> days = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
     vector<double> temperature = {0,5.457345,11.89078,15.02356,7.7893567,22,26.56};
+    double max_i = 0;
     for (int i = 0; i < 7; i++) {
         cout << "Day of a week and its temperature:" << days[i] << "&" << temperature[i] << endl;
         if (temperature[i] < 10) {
@@ -16,8 +17,11 @@ int main() {
         } else {
             cout << "Warm day" << endl;
         }
+        if (temperature[i] > temperature[max_i]) {
+            max_i = i;
+        }
     }
-    //tuple<string,double> warmest_day = {""}
-    
+    tuple<string,double> warmest_day = {days[max_i],temperature[max_i]};
+    cout << "The warmest day is:" << get<0>(warmest_day) << "with" << get<1>(warmest_day) << "°C" << endl;
     return 0;
 }
