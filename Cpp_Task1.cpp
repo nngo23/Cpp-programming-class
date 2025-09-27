@@ -9,10 +9,10 @@ int main() {
     vector<double> temperature = {0,5.457345,11.89078,15.02356,7.7893567,22,26.56};
     double max_i = 0;
     for (int i = 0; i < 7; i++) {
-        cout << "Day of a week and its temperature:" << days[i] << "&" << temperature[i] << endl;
+        cout << "Day in a week and its temperature: " << days[i] << " & " << temperature[i] << endl;
         if (temperature[i] < 10) {
             cout << "Cold day" << endl;
-        } else if (temperature[i] <= 10 || temperature[i] >= 20 ) {
+        } else if (temperature[i] >= 10 || temperature[i] <= 20 ) {
             cout << "Okay day" << endl;
         } else {
             cout << "Warm day" << endl;
@@ -22,6 +22,6 @@ int main() {
         }
     }
     tuple<string,double> warmest_day = {days[max_i],temperature[max_i]};
-    cout << "The warmest day is:" << get<0>(warmest_day) << "with" << get<1>(warmest_day) << "°C" << endl;
+    cout << "The warmest day is: " << get<0>(warmest_day) << " with " << get<1>(warmest_day) << " °C" << endl;
     return 0;
 }
