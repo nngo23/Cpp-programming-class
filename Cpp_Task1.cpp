@@ -12,7 +12,7 @@ int main() {
         cout << "Day in a week and its temperature: " << days[i] << " & " << temperature[i] << endl;
         if (temperature[i] < 10) {
             cout << "Cold day" << endl;
-        } else if (temperature[i] >= 10 || temperature[i] <= 20 ) {
+        } else if (temperature[i] >= 10 && temperature[i] <= 20 ) {
             cout << "Okay day" << endl;
         } else {
             cout << "Warm day" << endl;
