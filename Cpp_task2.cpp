@@ -67,7 +67,7 @@ public:
             file.close();
             return weather_station;
            } else {
-            cout << "Unable open file." << endl;
+            cout << "Unable to open file." << endl;
             return nullptr;
         }
     }
