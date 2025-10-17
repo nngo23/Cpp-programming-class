@@ -1,0 +1,21 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - ./config:/config
+    ports:
+      - "8123:8123"    # HA dashboard
+    restart: unless-stopped
+
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "1883:1883"    # MQTT TCP
+      - "9001:9001"    # MQTT WebSocket
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
