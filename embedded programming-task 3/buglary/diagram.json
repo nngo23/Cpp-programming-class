@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-pi-pico-w", "id": "pico", "top": -22.45, "left": -92.45, "attrs": {} },
+    { "type": "wokwi-pir-motion-sensor", "id": "pir1", "top": -92, "left": 40.62, "attrs": {} }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "pico:3V3", "pir1:VCC", "red", [ "h96.31", "v-38.4" ] ],
+    [ "pico:GND.7", "pir1:GND", "black", [ "h115.51", "v-57.6" ] ],
+    [ "pico:GP18", "pir1:OUT", "green", [ "h105.91", "v-143.96" ] ]
+  ],
+  "dependencies": {}
+}
