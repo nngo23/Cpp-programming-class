@@ -1,11 +1,8 @@
-// database.js
 const sqlite = require("sqlite3").verbose()
 const bcrypt = require("bcrypt")
 
-// open DB file
 const dbFile = new sqlite.Database("storage.db")
 
-// Create required tables
 dbFile.serialize(() => {
   dbFile.run(`
     CREATE TABLE IF NOT EXISTS measurements (
@@ -26,7 +23,6 @@ dbFile.serialize(() => {
   `)
 })
 
-// Insert sensor data
 function addMeasurement(t, h, l) {
   return new Promise((resolve, reject) => {
     dbFile.run(
@@ -39,7 +35,6 @@ function addMeasurement(t, h, l) {
   })
 }
 
-// Fetch recent sensor logs
 function getMeasurements(limit = 100) {
   return new Promise((resolve, reject) => {
     dbFile.all(
@@ -50,7 +45,6 @@ function getMeasurements(limit = 100) {
   })
 }
 
-// Register new account
 async function register(username, password) {
   const hashed = await bcrypt.hash(password, 10);
   return new Promise((resolve, reject) => {
@@ -62,7 +56,6 @@ async function register(username, password) {
   })
 }
 
-// Authenticate login
 async function login(username, password) {
   return new Promise((resolve, reject) => {
     dbFile.get(

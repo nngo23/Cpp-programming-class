@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import React, { useState, useEffect } from "react"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 
-const WS_SERVER = "ws://localhost:9000"; // WebSocket backend URL
+const WS_SERVER = "ws://localhost:9000"; 
 
 export default function LiveWeatherDashboard() {
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState([])
 
   useEffect(() => {
-    const ws = new WebSocket(WS_SERVER);
+    const ws = new WebSocket(WS_SERVER)
 
-    ws.onopen = () => console.log("WebSocket connection established");
+    ws.onopen = () => console.log("WebSocket connection established")
     ws.onmessage = (event) => {
-      const measurement = JSON.parse(event.data);
+      const measurement = JSON.parse(event.data)
 
       setRecords(prev => [
-        ...prev.slice(-19), // keep last 20 entries
+        ...prev.slice(-19), 
         {
           time: new Date(measurement.time).toLocaleTimeString(),
           temperature: measurement.temperature,
@@ -24,10 +24,10 @@ export default function LiveWeatherDashboard() {
       ]);
     };
 
-    ws.onclose = () => console.log("WebSocket connection closed");
+    ws.onclose = () => console.log("WebSocket connection closed")
 
-    return () => ws.close();
-  }, []);
+    return () => ws.close()
+  }, [])
 
   return (
     <div style={{ padding: 20 }}>
@@ -63,5 +63,5 @@ export default function LiveWeatherDashboard() {
         <Bar dataKey="light" fill="#3358A8" />
       </BarChart>
     </div>
-  );
+  )
 }

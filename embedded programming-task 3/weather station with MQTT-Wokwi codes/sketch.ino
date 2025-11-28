@@ -2,26 +2,22 @@
 #include "DHT.h"
 #include <PubSubClient.h>
 
-// WiFi for Wokwi
 const char* wifiSSID  = "Wokwi-GUEST";
-const char* wifiPass  = "";   // MISSING SEMICOLON FIXED
+const char* wifiPass  = "";   
 
-// MQTT Broker settings
 const char* mqttServer = "broker.hivemq.com";
 const int   mqttPort   = 1883;
 const char* mqttTopic  = "weather";
 
-// Sensor pins
 #define DHTpin     16
 #define LDRpin     28
 #define buzzerPin   8
 #define DHTtype  DHT22
 
-DHT dht(DHTpin, DHTtype);   // dht object declared CORRECTLY
+DHT dht(DHTpin, DHTtype);  
 WiFiClient wifiClient;
 PubSubClient mqtt(wifiClient);
 
-// auto-reconnect MQTT
 void ensureMQTT() {
   while (!mqtt.connected()) {
     Serial1.print("Connecting to MQTT...");
@@ -44,11 +40,11 @@ void setup() {
   pinMode(buzzerPin, OUTPUT);
   digitalWrite(buzzerPin, LOW);
 
-  dht.begin();       // FIX: dht object is now declared properly
+  dht.begin();      
 
   // Begin WiFi
   Serial1.print("Connecting to WiFi");
-  WiFi.begin(wifiSSID, wifiPass);   // FIX: wifiPass now exists!
+  WiFi.begin(wifiSSID, wifiPass);  
   while (WiFi.status() != WL_CONNECTED) {
     Serial1.print(".");
     delay(500);
@@ -57,8 +53,7 @@ void setup() {
   Serial1.print("IP Address: ");
   Serial1.println(WiFi.localIP());
 
-  mqtt.setServer(mqttServer, mqttPort);   // FIX: mqttServer + mqttPort declared correctly
-  ensureMQTT();
+  mqtt.setServer(mqttServer, mqttPort);  
 }
 
 void loop() {
@@ -67,7 +62,7 @@ void loop() {
   }
   mqtt.loop();
 
-  float temp  = dht.readTemperature();   // FIX: dht now exists
+  float temp  = dht.readTemperature();   
   float humid = dht.readHumidity();
   int light   = analogRead(LDRpin);
 
@@ -98,8 +93,7 @@ void loop() {
     "{\"temperature\":%.2f,\"humidity\":%.2f,\"light\":%d}",
     temp, humid, light);
 
-  mqtt.publish(mqttTopic, msg);  // FIX: mqttTopic declared correctly
-
+  mqtt.publish(mqttTopic, msg);  
   Serial1.print("Sent MQTT: ");
   Serial1.println(msg);
 
