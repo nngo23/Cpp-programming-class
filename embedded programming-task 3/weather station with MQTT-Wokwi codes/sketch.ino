@@ -42,7 +42,6 @@ void setup() {
 
   dht.begin();      
 
-  // Begin WiFi
   Serial1.print("Connecting to WiFi");
   WiFi.begin(wifiSSID, wifiPass);  
   while (WiFi.status() != WL_CONNECTED) {
