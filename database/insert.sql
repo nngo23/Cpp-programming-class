@@ -28,8 +28,6 @@ INSERT OR IGNORE INTO Credit (credit_id, course_id, student_id, date, grade, cre
 (502, 202, 2, '2024-06-03', 3.0, 4),
 (503, 203, 3, '2024-06-05', 1.9, 3);
 
-
--- Credit
 INSERT OR IGNORE INTO Credit (credit_id, course_id, student_id, date, grade, credits) VALUES
 (501, 201, 1, '2024-06-01', 1.5, 3),
 (502, 202, 2, '2024-06-03', 2.0, 4),
