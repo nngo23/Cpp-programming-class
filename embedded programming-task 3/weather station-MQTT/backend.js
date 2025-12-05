@@ -1,23 +1,26 @@
 require("dotenv").config();
 const express = require("express");
 const mqtt = require("mqtt");
+const WebSocket = require("ws");
+const http = require("http");
 
 const db = require("./database");
-const { broadcastToClients } = require("./websocket");
 const dispatchWebhook = require("./webhook");
 
-const BROKER = process.env.MQTT_URL || "mqtt://broker.hivemq.com";
-const MQTT_FEED = process.env.MQTT_TOPIC || "weather";
-const HOOK_TARGET = process.env.DISCORD_WEBHOOK_URL || "";
+// Config from .env
+const broker = process.env.MQTT_URL || "mqtt://broker.hivemq.com";
+const mqttFeed = process.env.MQTT_TOPIC || "weather";
+const hookTarget = process.env.DISCORD_WEBHOOK_URL || "";
 
-const WARN_TEMP = Number(process.env.THRESHOLD_TEMP || 30);
-const WARN_HUM = Number(process.env.THRESHOLD_HUMIDITY || 80);
-const HTTP_PORT = process.env.HTTP_PORT || 8000;
+const warnTemp = Number(process.env.THRESHOLD_TEMP || 30);
+const warnHum = Number(process.env.THRESHOLD_HUMIDITY || 80);
+const httpPort = process.env.HTTP_PORT || 8000;
+const wsPort = process.env.WS_PORT || 9101;
 
+// ======== Express API ========
 const app = express();
 app.use(express.json());
 
-// API endpoints
 app.get("/weather/latest", async (_req, res) => {
   const entries = await db.getMeasurements(1);
   res.json(entries[0] || {});
@@ -43,16 +46,41 @@ app.post("/auth/login", async (req, res) => {
   res.json({ ok: valid });
 });
 
-app.listen(HTTP_PORT, () =>
-  console.log(`Backend API running on port ${HTTP_PORT}`)
-);
+// Start HTTP API
+app.listen(httpPort, () => {
+  console.log(`Backend API running on port ${httpPort}`);
+});
 
-// MQTT setup
-const mqttClient = mqtt.connect(BROKER);
+// ======== WebSocket Server ========
+const server = http.createServer();
+const wss = new WebSocket.Server({ server });
+
+wss.on("connection", (ws) => {
+  console.log("WebSocket client connected");
+  ws.on("close", () => console.log("Client disconnected"));
+});
+
+// Function to broadcast MQTT data to all connected WS clients
+function broadcastToClients(payload) {
+  const text = JSON.stringify(payload);
+  for (const client of wss.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(text);
+    }
+  }
+}
+
+// Start WS server
+server.listen(wsPort, () => {
+  console.log(`WS server running on port ${wsPort} — Ready for connections`);
+});
+
+// ======== MQTT Client ========
+const mqttClient = mqtt.connect(broker);
 
 mqttClient.on("connect", () => {
-  console.log("MQTT online:", BROKER);
-  mqttClient.subscribe(MQTT_FEED);
+  console.log("MQTT online:", broker);
+  mqttClient.subscribe(mqttFeed);
 });
 
 mqttClient.on("message", async (_topic, buffer) => {
@@ -60,15 +88,16 @@ mqttClient.on("message", async (_topic, buffer) => {
     const payload = JSON.parse(buffer.toString());
     const { temperature, humidity, light } = payload;
 
+    // Save to database
     await db.addMeasurement(temperature, humidity, light);
 
     // Broadcast to WebSocket clients
     broadcastToClients({ ...payload, time: new Date().toISOString() });
 
-    // Send webhook if thresholds exceeded
-    const alertNeeded = temperature > WARN_TEMP || humidity > WARN_HUM;
-    if (HOOK_TARGET && alertNeeded) {
-      dispatchWebhook(HOOK_TARGET, {
+    // Send Discord alert if needed
+    const alertNeeded = temperature > warnTemp || humidity > warnHum;
+    if (hookTarget && alertNeeded) {
+      dispatchWebhook(hookTarget, {
         content: `Alert triggered!\nTemp: ${temperature}°C\nHumidity: ${humidity}%`,
       });
     }
