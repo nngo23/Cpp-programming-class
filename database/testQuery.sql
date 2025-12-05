@@ -78,6 +78,5 @@ SELECT
     SUM(cr.credits) AS creditNumber
 FROM Course c
 LEFT JOIN Credit cr ON c.course_id = cr.course_id
-LEFT JOIN Student s ON cr.student_id = s.student_id
 GROUP BY c.course_id, c.name
 ORDER BY c.name;
