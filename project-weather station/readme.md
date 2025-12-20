@@ -1,5 +1,6 @@
-**Networked Weather Station — Pico W, MQTT & Web Dashboard
-Introduction**
+**Networked Weather Station — Pico W, MQTT & Web Dashboard**
+
+**Introduction**
 This project presents a connected weather monitoring platform built around a Raspberry Pi Pico W, simulated using Wokwi. Sensor readings are transmitted over MQTT, stored in a local database, streamed live to a web interface, and used to generate automated alert notifications.
 
 The solution demonstrates how embedded systems integrate with backend services, databases, real-time communication, and modern frontend frameworks.
